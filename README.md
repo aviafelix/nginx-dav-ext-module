@@ -1,29 +1,28 @@
-# NGINX WebDAV support of PROPFIND OPTIONS LOCK/UNLOCK
-## nginx-dav-ext-module
+## NGINX WebDAV missing commands support (PROPFIND & OPTIONS)
 
-(c) 2012 Arutyunyan Roman (arut@qip.ru, arutyunyan.roman@gmail.com)
+For full WebDAV support in NGINX you need to turn on standard NGINX
+WebDAV module (providing partial WebDAV implementation) as well as
+this module for missing methods:
+```
+./configure --with-http_dav_module --add-module=<path-to-this-module>
+```
 
-### WARNING: This version provides experimental lock support, it's not properly tested
+### Build requirements: libexpat-dev (aka expat-devel)
 
-For full WebDAV support in NGINX you need to turn on standard NGINX 
-WebDAV module (providing partial WebDAV implementation) as well as 
-this module for missing methods
+### Example config
+```
+location / {
+  dav_methods PUT DELETE MKCOL COPY MOVE;
+  dav_ext_methods PROPFIND OPTIONS;
+  root /var/root/;
+}
+```
 
-    ./configure --with-http_dav_module --add-module=path-to-this-module
+### Centos 7 (x64) yum repo
+```
+cd /etc/yum.repos.d
+sed -i '/\[epel\]/a exclude=nginx' epel.repo
+wget http://yum.devopsx.com/devopsx.repo
+yum install nginx
+```
 
-
-
-Requirements:
-
-	libexpat-dev
-
-
-Example config:
-
-	location / {
-
-		dav_methods PUT DELETE MKCOL COPY MOVE LOCK UNLOCK;
-		dav_ext_methods PROPFIND OPTIONS;
-
-		root /var/root/;
-	}
