@@ -17,3 +17,11 @@ location / {
   root /var/root/;
 }
 ```
+
+### Centos 7 (x64) yum repo
+```
+cd /etc/yum.repos.d
+sed -i '/\[epel\]/a exclude=nginx' epel.repo
+wget http://yum.devopsx.com/devopsx.repo
+yum install nginx
+```
