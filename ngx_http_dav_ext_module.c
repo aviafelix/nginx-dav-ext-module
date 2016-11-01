@@ -2,25 +2,25 @@
   Copyright (c) 2012, Roman Arutyunyan (arut@qip.ru)
   All rights reserved.
 
-  Redistribution and use in source and binary forms, with or without modification, 
+  Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
 
-  1. Redistributions of source code must retain the above copyright notice, 
+  1. Redistributions of source code must retain the above copyright notice,
   this list of conditions and the following disclaimer.
 
-  2. Redistributions in binary form must reproduce the above copyright notice, 
+  2. Redistributions in binary form must reproduce the above copyright notice,
   this list of conditions and the following disclaimer in the documentation
   and/or other materials provided with the distribution.
 
   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ''AS IS'' AND ANY EXPRESS OR IMPLIED
-  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF 
-  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT 
+  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
   SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, 
-  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR 
-  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
-  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+  BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
  *******************************************************************************/
 
@@ -145,11 +145,11 @@ static int ngx_http_dav_ext_xmlcmp(const char *xname, const char *sname) {
 	return strcmp(c ? c + 1 : xname, sname);
 }
 
-static void ngx_http_dav_ext_start_xml_elt(void *user_data, 
+static void ngx_http_dav_ext_start_xml_elt(void *user_data,
 		const XML_Char *name, const XML_Char **atts)
 {
 	ngx_http_dav_ext_ctx_t *ctx = user_data;
-		
+
 #define NGX_HTTP_DAV_EXT_SET_NODE(nm) \
 	if (!ngx_http_dav_ext_xmlcmp(name, #nm)) \
 		ctx->nodes ^= NGX_HTTP_DAV_EXT_NODE_##nm
@@ -166,7 +166,7 @@ static void ngx_http_dav_ext_end_xml_elt(void *user_data, const XML_Char *name)
 	ngx_http_dav_ext_ctx_t *ctx = user_data;
 
 	if (ctx->nodes & NGX_HTTP_DAV_EXT_NODE_propfind) {
-		
+
 		if (ctx->nodes & NGX_HTTP_DAV_EXT_NODE_prop) {
 
 			ctx->propfind = NGX_HTTP_DAV_EXT_PROPFIND_SELECTED;
@@ -200,7 +200,7 @@ static void ngx_http_dav_ext_end_xml_elt(void *user_data, const XML_Char *name)
 			ctx->propfind = NGX_HTTP_DAV_EXT_PROPFIND_ALL;
 
 		}
-		
+
 	}
 
 	ngx_http_dav_ext_start_xml_elt(user_data, name, NULL);
@@ -211,13 +211,13 @@ static void ngx_http_dav_ext_end_xml_elt(void *user_data, const XML_Char *name)
 
 static void
 ngx_http_dav_ext_output(ngx_http_request_t *r, ngx_chain_t **ll,
-	ngx_int_t flags, u_char *data, ngx_uint_t len) 
+	ngx_int_t flags, u_char *data, ngx_uint_t len)
 {
 	ngx_chain_t *cl;
 	ngx_buf_t   *b;
 
 	if (!len) {
-		return; 
+		return;
 	}
 
 	if (flags & NGX_HTTP_DAV_EXT_ESCAPE) {
@@ -291,7 +291,7 @@ ngx_http_dav_ext_flush(ngx_http_request_t *r, ngx_chain_t **ll)
 	ngx_http_dav_ext_output(r, ll, 0, (u_char*)(s), sizeof(s) - 1)
 
 static ngx_int_t
-ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r, 
+ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r,
 	char *path, ngx_str_t *uri, ngx_chain_t **ll, ngx_uint_t props)
 {
 	struct stat   st;
@@ -315,10 +315,10 @@ ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r,
 
 		/* ISO 8601 time format
 		   2012-02-20T16:15:00Z */
-		NGX_HTTP_DAV_EXT_OUTCB(buf, strftime((char*)buf, sizeof(buf), 
+		NGX_HTTP_DAV_EXT_OUTCB(buf, strftime((char*)buf, sizeof(buf),
 						"<D:creationdate>"
 							"%Y-%m-%dT%TZ"
-						"</D:creationdate>\n", 
+						"</D:creationdate>\n",
 
 			&stm));
 	}
@@ -331,14 +331,14 @@ ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r,
 		if (uri->len) {
 
 			for(name.data = uri->data + uri->len;
-				name.data >= uri->data + 1 && name.data[-1] != '/'; 
+				name.data >= uri->data + 1 && name.data[-1] != '/';
 				--name.data);
 
 			name.len = uri->data + uri->len - name.data;
 
 			NGX_HTTP_DAV_EXT_OUTES(&name);
 		}
-		
+
 		NGX_HTTP_DAV_EXT_OUTL(
 						"</D:displayname>\n"
 			);
@@ -351,14 +351,14 @@ ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r,
 	}
 
 	if (props & NGX_HTTP_DAV_EXT_PROP_getcontentlength) {
-		NGX_HTTP_DAV_EXT_OUTCB(buf, ngx_snprintf(buf, sizeof(buf), 
+		NGX_HTTP_DAV_EXT_OUTCB(buf, ngx_snprintf(buf, sizeof(buf),
 						"<D:getcontentlength>"
 							"%O"
-						"</D:getcontentlength>\n", 
+						"</D:getcontentlength>\n",
 
 			st.st_size) - buf);
 	}
-	
+
 	if (props & NGX_HTTP_DAV_EXT_PROP_getcontenttype) {
 		NGX_HTTP_DAV_EXT_OUTL(
 						"<D:getcontenttype/>\n"
@@ -377,10 +377,10 @@ ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r,
 			return NGX_ERROR;
 
 		/* RFC 2822 time format */
-		NGX_HTTP_DAV_EXT_OUTCB(buf, strftime((char*)buf, sizeof(buf), 
+		NGX_HTTP_DAV_EXT_OUTCB(buf, strftime((char*)buf, sizeof(buf),
 						"<D:getlastmodified>"
 							"%a, %d %b %Y %T GMT"
-						"</D:getlastmodified>\n", 
+						"</D:getlastmodified>\n",
 
 			&stm));
 	}
@@ -419,9 +419,9 @@ ngx_http_dav_ext_send_propfind_atts(ngx_http_request_t *r,
 
 	return NGX_OK;
 }
-				
+
 static ngx_int_t
-ngx_http_dav_ext_send_propfind_item(ngx_http_request_t *r, 
+ngx_http_dav_ext_send_propfind_item(ngx_http_request_t *r,
 	char *path, ngx_str_t *uri)
 {
 	ngx_http_dav_ext_ctx_t *ctx;
@@ -463,7 +463,7 @@ ngx_http_dav_ext_send_propfind_item(ngx_http_request_t *r,
 	} else {
 
 		switch (ngx_http_dav_ext_send_propfind_atts(r, path, uri, ll,
-				ctx->propfind == NGX_HTTP_DAV_EXT_PROPFIND_SELECTED ? 
+				ctx->propfind == NGX_HTTP_DAV_EXT_PROPFIND_SELECTED ?
 				ctx->props : (ngx_uint_t)-1))
 		{
 			case NGX_HTTP_NOT_FOUND:
@@ -484,7 +484,7 @@ ngx_http_dav_ext_send_propfind_item(ngx_http_request_t *r,
 					"<D:status>HTTP/"
 		);
 
-	NGX_HTTP_DAV_EXT_OUTCB(vbuf, ngx_snprintf(vbuf, sizeof(vbuf), "%d.%d ", 
+	NGX_HTTP_DAV_EXT_OUTCB(vbuf, ngx_snprintf(vbuf, sizeof(vbuf), "%d.%d ",
 			r->http_major, r->http_minor) - vbuf);
 
 	NGX_HTTP_DAV_EXT_OUTS(&status_line);
@@ -503,7 +503,7 @@ ngx_http_dav_ext_send_propfind_item(ngx_http_request_t *r,
 
 /* path returned by this function is terminated
    with a hidden (out-of-len) null */
-static void ngx_http_dav_ext_make_child(ngx_pool_t *pool, ngx_str_t *parent, 
+static void ngx_http_dav_ext_make_child(ngx_pool_t *pool, ngx_str_t *parent,
 		u_char *child, size_t chlen, ngx_str_t *path)
 {
 	u_char *s;
@@ -534,14 +534,14 @@ ngx_http_dav_ext_send_propfind(ngx_http_request_t *r)
 	ngx_str_t                 depth_name = ngx_string("depth");
 	u_char                    *p, *uc;
 
-	if (ngx_http_variable_unknown_header(&vv, &depth_name, 
+	if (ngx_http_variable_unknown_header(&vv, &depth_name,
 					&r->headers_in.headers.part, 0) == NGX_OK
 		&& vv.valid)
 	{
-		if (vv.len == sizeof("infinity") -1 
+		if (vv.len == sizeof("infinity") -1
 			&& !ngx_strncasecmp(vv.data, (u_char*)"infinity", vv.len))
 		{
-			depth = DAV_EXT_INFINITY; 
+			depth = DAV_EXT_INFINITY;
 		} else {
 			depth = ngx_atoi(vv.data, vv.len);
 		}
@@ -602,7 +602,7 @@ ngx_http_dav_ext_send_propfind(ngx_http_request_t *r)
 
 				len = strlen(de->d_name);
 
-				ngx_http_dav_ext_make_child(r->pool, &path, 
+				ngx_http_dav_ext_make_child(r->pool, &path,
 					(u_char*)de->d_name, len, &spath);
 
 				/* escape uri component */
@@ -664,7 +664,7 @@ ngx_http_dav_ext_propfind_handler(ngx_http_request_t *r)
 
 	XML_SetUserData(parser, ctx);
 
-	XML_SetElementHandler(parser, 
+	XML_SetElementHandler(parser,
 			ngx_http_dav_ext_start_xml_elt,
 			ngx_http_dav_ext_end_xml_elt);
 
@@ -716,7 +716,7 @@ ngx_http_dav_ext_handler(ngx_http_request_t *r)
 	ngx_int_t                    rc;
 	ngx_table_elt_t              *h;
 	ngx_http_dav_ext_loc_conf_t  *delcf;
-		    
+
 	delcf = ngx_http_get_module_loc_conf(r, ngx_http_dav_ext_module);
 
 	if (!(r->method & delcf->methods)) {
@@ -730,14 +730,14 @@ ngx_http_dav_ext_handler(ngx_http_request_t *r)
 			ngx_log_debug0(NGX_LOG_DEBUG_HTTP, r->connection->log, 0,
 					"dav_ext propfind");
 
-			rc = ngx_http_read_client_request_body(r, 
+			rc = ngx_http_read_client_request_body(r,
 						ngx_http_dav_ext_propfind_handler);
 
 			if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
 				return rc;
 			}
 
-			return NGX_DONE;   
+			return NGX_DONE;
 
 		case NGX_HTTP_OPTIONS:
 
@@ -821,4 +821,3 @@ ngx_http_dav_ext_init(ngx_conf_t *cf)
 
 	return NGX_OK;
 }
-
